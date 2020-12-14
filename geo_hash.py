@@ -25,7 +25,7 @@ class GeoHash(object):
 
         response = self.geo_data_manager.put_Point(point)
 
-        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        if response != 'Error' and response['ResponseMetadata']['HTTPStatusCode'] == 200:
             return GeoJsonPoint(latitude, longitude, properties, point_id)
 
         return None
@@ -36,12 +36,11 @@ class GeoHash(object):
             point_id
         ))
 
-        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        if response != 'Error' and response['ResponseMetadata']['HTTPStatusCode'] == 200:
             item = boto3_deserializer(response['Item'])
             return GeoJsonPoint.decode_from_dynamodbgeo(item)
 
         return None
-
 
 
     def get_points(self, properties_filter=None):

@@ -1,5 +1,5 @@
-
 import simplejson as json
+
 
 class GeoJsonPoint(object):
     def __init__(self, latitude, longitude, properties, point_id=None):
