@@ -12,6 +12,11 @@ def get_geo_data_manager_config(aws_region, table_name, hash_key_length):
     return geo_data_manager_config
 
 
+def get_table(aws_region, table_name):
+    dynamodb = boto3.resource('dynamodb', region_name=aws_region)
+    return dynamodb.Table(table_name)
+
+
 def get_geo_data_manager(aws_region, table_name, hash_key_length):
     geo_data_manager_config = get_geo_data_manager_config(aws_region, table_name, hash_key_length)
     return dynamodbgeo.GeoDataManager(geo_data_manager_config)

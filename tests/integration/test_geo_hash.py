@@ -10,7 +10,7 @@ class TestGeoHash(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config = configparser.ConfigParser()
-        cls.config.read('../config.ini')
+        cls.config.read('../../config.ini')
 
     def test_add_geo_point(self):
         geo_hash = GeoHash(
@@ -30,3 +30,41 @@ class TestGeoHash(TestCase):
         print(geo_json_point_read)
 
         self.assertEqual(geo_json_point_write, geo_json_point_read)
+
+    def test_get_geo_points(self):
+        geo_hash = GeoHash(
+            self.config['dynamodb']['region'],
+            self.config['dynamodb']['table'],
+            self.config['dynamodb']['hash_key_length']
+        )
+
+        result = geo_hash.get_geo_points()
+        self.assertIsNotNone(result)
+
+        for r in result:
+            print(r)
+
+        self.assertTrue(len(result) > 0)
+
+    def test_get_geo_points_by_radius(self):
+        geo_hash = GeoHash(
+            self.config['dynamodb']['region'],
+            self.config['dynamodb']['table'],
+            self.config['dynamodb']['hash_key_length']
+        )
+
+        geo_hash.add_geo_point(49.2695199, -123.12808620000001, {'country': 'canada', 'city': 'vancouver', 'name': 'home'})
+        geo_hash.add_geo_point(49.27985, -123.08105, {'country': 'canada', 'city': 'vancouver', 'name': 'la casa gelato'})
+        geo_hash.add_geo_point(49.25891, -123.16817, {'country': 'canada', 'city': 'vancouver', 'name': 'la glace'})
+
+        result = geo_hash.get_geo_points_by_radius(49.2695199, -123.12808620000001, 50000)  # 50km radius
+        # print(result)
+        self.assertIsNotNone(result)
+
+        for r in result:
+            print(r)
+
+        self.assertTrue(len(result) > 0)
+        self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'la casa gelato', result))) > 0)  # ~25km
+        self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'la glace', result))) > 0)  # ~3km
+

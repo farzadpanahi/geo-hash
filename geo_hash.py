@@ -1,14 +1,16 @@
 
-from dynamodb_helper import get_geo_data_manager, boto3_deserializer, boto3_serializer
+from dynamodb_helper import get_geo_data_manager, boto3_deserializer, boto3_serializer, get_table
 from uuid import uuid4
 import dynamodbgeo
 from pprint import pprint
 from geo_json import GeoJsonPoint
+EARTH_RADIUS_METERS = 6367000.0
 
 
 class GeoHash(object):
     def __init__(self, aws_region, table_name, hash_key_length):
         self.geo_data_manager = get_geo_data_manager(aws_region, table_name, int(hash_key_length))
+        self.table = get_table(aws_region, table_name)
 
     def add_geo_point(self, latitude, longitude, properties):
         item = boto3_serializer(properties)
@@ -42,14 +44,28 @@ class GeoHash(object):
 
         return None
 
+    def get_geo_points(self, properties_filter=None):
+        response = self.table.scan()  # NOTE: scan has 1MB limit
 
-    def get_points(self, properties_filter=None):
-        pass
+        if response != 'Error' and response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            items = response['Items']
+            return [GeoJsonPoint.decode_from_dynamodbgeo(item) for item in items]
 
-    def get_points_by_radius(self, min_point, max_point, properties_filter=None):
-        pass
+        return None
 
-    def get_points_by_rectangle(self, center_point, radius_meter, properties_filter=None):
+    def get_geo_points_by_radius(self, center_point_latitude, center_point_longitude, radius_meter, properties_filter=None):
+        response = self.geo_data_manager.queryRadius(
+            dynamodbgeo.QueryRadiusRequest(
+                dynamodbgeo.GeoPoint(center_point_latitude, center_point_longitude),
+                radius_meter, {}, sort=True
+            ))
+
+        if response is not None:
+            return [GeoJsonPoint.decode_from_dynamodbgeo(boto3_deserializer(item)) for item in response]
+
+        return None
+
+    def get_geo_points_by_rectangle(self, min_point, max_point, properties_filter=None):
         pass
 
 
