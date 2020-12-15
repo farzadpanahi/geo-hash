@@ -1,7 +1,8 @@
 import simplejson as json
+from geojson import Feature, Point
 
 
-class GeoJsonPoint(object):
+class GeoPoint(object):
     def __init__(self, latitude, longitude, properties, point_id=None):
         self.latitude = latitude
         self.longitude = longitude
@@ -14,7 +15,7 @@ class GeoJsonPoint(object):
         properties = {k: v for (k, v) in dynamodbgeo_dict.items() if k not in ['geoJson', 'geohash', 'hashKey', 'rangeKey']}
         point_id = dynamodbgeo_dict['rangeKey']
 
-        return GeoJsonPoint(float(latitude_longitude[0]), float(latitude_longitude[1]), properties, point_id)
+        return GeoPoint(float(latitude_longitude[0]), float(latitude_longitude[1]), properties, point_id)
 
     def __str__(self):
         return json.dumps(self.to_dict())
@@ -28,10 +29,17 @@ class GeoJsonPoint(object):
         }
 
     def __eq__(self, other):
-        if isinstance(other, GeoJsonPoint):
+        if isinstance(other, GeoPoint):
             return (self.point_id == other.point_id and
                     self.latitude == other.latitude and
                     self.longitude == other.longitude and
                     self.properties == other.properties)
 
         return False
+
+    def to_geo_json(self):
+        return Feature(
+            id=self.point_id,
+            geometry=Point((self.latitude, self.longitude)),
+            properties=self.properties
+        )

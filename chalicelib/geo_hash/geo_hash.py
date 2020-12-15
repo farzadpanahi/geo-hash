@@ -1,7 +1,7 @@
 from chalicelib.geo_hash.dynamodb_helper import get_geo_data_manager, boto3_deserializer, boto3_serializer, get_table
 from uuid import uuid4
 import dynamodbgeo
-from chalicelib.geo_hash.geo_json import GeoJsonPoint
+from chalicelib.geo_hash.geo_point import GeoPoint
 
 
 class GeoHash(object):
@@ -25,7 +25,7 @@ class GeoHash(object):
         response = self.geo_data_manager.put_Point(point)
 
         if response != 'Error' and response['ResponseMetadata']['HTTPStatusCode'] == 200:
-            return GeoJsonPoint(latitude, longitude, properties, point_id)
+            return GeoPoint(latitude, longitude, properties, point_id)
 
         return None
 
@@ -37,7 +37,7 @@ class GeoHash(object):
 
         if response != 'Error' and response['ResponseMetadata']['HTTPStatusCode'] == 200:
             item = boto3_deserializer(response['Item'])
-            return GeoJsonPoint.decode_from_dynamodbgeo(item)
+            return GeoPoint.decode_from_dynamodbgeo(item)
 
         return None
 
@@ -46,7 +46,7 @@ class GeoHash(object):
 
         if response != 'Error' and response['ResponseMetadata']['HTTPStatusCode'] == 200:
             items = response['Items']
-            return [GeoJsonPoint.decode_from_dynamodbgeo(item) for item in items]
+            return [GeoPoint.decode_from_dynamodbgeo(item) for item in items]
 
         return None
 
@@ -58,7 +58,7 @@ class GeoHash(object):
             ))
 
         if response is not None:
-            return [GeoJsonPoint.decode_from_dynamodbgeo(boto3_deserializer(item)) for item in response]
+            return [GeoPoint.decode_from_dynamodbgeo(boto3_deserializer(item)) for item in response]
 
         return None
 
@@ -71,7 +71,7 @@ class GeoHash(object):
             ))
 
         if response is not None:
-            return [GeoJsonPoint.decode_from_dynamodbgeo(boto3_deserializer(item)) for item in response]
+            return [GeoPoint.decode_from_dynamodbgeo(boto3_deserializer(item)) for item in response]
 
         return None
 

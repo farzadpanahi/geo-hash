@@ -6,11 +6,13 @@ app = Chalice(app_name='rest')
 
 config = configparser.ConfigParser()
 config.read('chalicelib/config.ini')
+
 geo_hash = GeoHash(
     config['dynamodb']['region'],
     config['dynamodb']['table'],
     config['dynamodb']['hash_key_length']
 )
+
 
 @app.route('/')
 def index():
@@ -23,7 +25,7 @@ def get_pins():
     if pins is None:
         raise NotFoundError
 
-    return [pin.to_dict() for pin in pins]
+    return [pin.to_geo_json() for pin in pins]
 
 
 @app.route('/pin/{latitude}/{longitude}/{pinid}')
@@ -35,7 +37,7 @@ def get_pin(latitude, longitude, pinid):
     if pin is None:
         raise NotFoundError
 
-    return pin.to_dict()
+    return pin.to_geo_json()
 
 
 @app.route('/pin', methods=['POST'])
@@ -44,11 +46,12 @@ def post_pin():
     if not _validate_post_pin(data):
         raise BadRequestError
 
-    pin = geo_hash.add_geo_point(data['latitude'], data['longitude'], data['properties'])
+    pin = geo_hash.add_geo_point(data['latitude'], data['longitude'],
+                                 data['properties'] if 'properties' in data else {})
     if pin is None:
         raise ChaliceViewError
 
-    return pin.to_dict()
+    return pin.to_geo_json()
 
 
 def _validate_post_pin(body):
@@ -58,10 +61,10 @@ def _validate_post_pin(body):
     try:
         latitude = float(body['latitude'])
         longitude = float(body['longitude'])
-        properties = body['properties']
+        # properties = body['properties']
 
-        if len(properties) == 0:
-            return False
+        # if len(properties) == 0:
+        #     return False
 
     except:
         return False

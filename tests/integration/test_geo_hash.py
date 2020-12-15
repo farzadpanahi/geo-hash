@@ -1,7 +1,7 @@
 from unittest import TestCase
 from chalicelib.geo_hash.geo_hash import GeoHash
 import configparser
-from chalicelib.geo_hash.geo_json import GeoJsonPoint
+from chalicelib.geo_hash.geo_point import GeoPoint
 from decimal import Decimal
 
 
@@ -19,7 +19,7 @@ class TestGeoHash(TestCase):
             self.config['dynamodb']['hash_key_length']
         )
 
-        geo_json_point = GeoJsonPoint(23.241369, 20.870348, {'country': 'abc', 'city': 'test', 'number': 123, 'yesno': True, 'number-f': Decimal('123.456')})
+        geo_json_point = GeoPoint(23.241369, 20.870348, {'country': 'abc', 'city': 'test', 'number': 123, 'yesno': True, 'number-f': Decimal('123.456')})
 
         geo_json_point_write = geo_hash.add_geo_point(geo_json_point.latitude, geo_json_point.longitude, geo_json_point.properties)
         print(geo_json_point_write)
