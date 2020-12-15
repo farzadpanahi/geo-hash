@@ -28,6 +28,30 @@ def get_pins():
     return [pin.to_geo_json() for pin in pins]
 
 
+@app.route('/pins/cp/{latitude}/{longitude}/rad/{radius}')
+def get_pins_by_radius(latitude, longitude, radius):
+    if not _validate_get_pins_by_radius(latitude, longitude, radius):
+        raise BadRequestError
+
+    pins = geo_hash.get_geo_points_by_radius(float(latitude), float(longitude), int(radius))
+    if pins is None or len(pins) == 0:
+        raise NotFoundError
+
+    return [pin.to_geo_json() for pin in pins]
+
+
+@app.route('/pins/rec/{min_latitude}/{min_longitude}/{max_latitude}/{max_longitude}')
+def get_pins_by_rectangle(min_latitude, min_longitude, max_latitude, max_longitude):
+    if not _validate_get_pins_by_rectangle(min_latitude, min_longitude, max_latitude, max_longitude):
+        raise BadRequestError
+
+    pins = geo_hash.get_geo_points_by_rectangle(float(min_latitude), float(min_longitude), float(max_latitude), float(max_longitude))
+    if pins is None or len(pins) == 0:
+        raise NotFoundError
+
+    return [pin.to_geo_json() for pin in pins]
+
+
 @app.route('/pin/{latitude}/{longitude}/{pinid}')
 def get_pin(latitude, longitude, pinid):
     if not _validate_get_pin(latitude, longitude, pinid):
@@ -79,6 +103,33 @@ def _validate_get_pin(latitude, longitude, pinid):
 
         if pinid is None or len(pinid) == 0:
             return False
+
+    except:
+        return False
+
+    return True
+
+
+def _validate_get_pins_by_radius(latitude, longitude, radius):
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+        radius = int(radius)
+
+        if radius < 0:
+            return False
+    except:
+        return False
+
+    return True
+
+
+def _validate_get_pins_by_rectangle(min_latitude, min_longitude, max_latitude, max_longitude):
+    try:
+        min_latitude = float(min_latitude)
+        min_longitude = float(min_longitude)
+        max_latitude = float(max_latitude)
+        max_longitude = float(max_longitude)
 
     except:
         return False
