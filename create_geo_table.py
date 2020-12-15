@@ -7,7 +7,7 @@ before executing this script use the following command to export the proper aws 
 $ export AWS_PROFILE=user1
 """
 
-from dynamodb_helper import create_geo_table
+from chalicelib.geo_hash.dynamodb_helper import create_geo_table
 import configparser
 
 

@@ -1,0 +1,17 @@
+attrs==20.2.0
+boto3==1.16.35
+botocore==1.19.35
+chalice==1.21.6
+click==7.1.2
+dynamodbgeo==0.0.3
+enum-compat==0.0.3
+future==0.18.2
+jmespath==0.10.0
+mypy-extensions==0.4.3
+python-dateutil==2.8.1
+PyYAML==5.3.1
+s2sphere==0.2.5
+s3transfer==0.3.3
+simplejson==3.17.2
+six==1.15.0
+urllib3==1.26.2

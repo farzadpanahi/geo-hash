@@ -1,10 +1,7 @@
-
-from dynamodb_helper import get_geo_data_manager, boto3_deserializer, boto3_serializer, get_table
+from chalicelib.geo_hash.dynamodb_helper import get_geo_data_manager, boto3_deserializer, boto3_serializer, get_table
 from uuid import uuid4
 import dynamodbgeo
-from pprint import pprint
-from geo_json import GeoJsonPoint
-EARTH_RADIUS_METERS = 6367000.0
+from chalicelib.geo_hash.geo_json import GeoJsonPoint
 
 
 class GeoHash(object):

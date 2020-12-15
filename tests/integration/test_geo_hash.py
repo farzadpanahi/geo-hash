@@ -1,7 +1,7 @@
 from unittest import TestCase
-from geo_hash import GeoHash
+from chalicelib.geo_hash.geo_hash import GeoHash
 import configparser
-from geo_json import GeoJsonPoint
+from chalicelib.geo_hash.geo_json import GeoJsonPoint
 from decimal import Decimal
 
 
@@ -10,7 +10,7 @@ class TestGeoHash(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config = configparser.ConfigParser()
-        cls.config.read('../../config.ini')
+        cls.config.read('../../chalicelib/config.ini')
 
     def test_add_geo_point(self):
         geo_hash = GeoHash(

@@ -17,12 +17,15 @@ class GeoJsonPoint(object):
         return GeoJsonPoint(float(latitude_longitude[0]), float(latitude_longitude[1]), properties, point_id)
 
     def __str__(self):
-        return json.dumps({
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return {
             'point_id': self.point_id,
             'latitude': self.latitude,
             'longitude': self.longitude,
             'properties': self.properties
-        })
+        }
 
     def __eq__(self, other):
         if isinstance(other, GeoJsonPoint):
