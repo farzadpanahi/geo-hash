@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import boto3
 import dynamodbgeo
 from boto3.dynamodb.types import TypeDeserializer, TypeSerializer
@@ -36,7 +38,7 @@ def create_geo_table(aws_region, table_name, hash_key_length):
 
 def boto3_serializer(python_dict):
     serializer = TypeSerializer()
-    return {k: serializer.serialize(v) for k, v in python_dict.items()}
+    return {k: serializer.serialize(v if not isinstance(v, float) else Decimal(str(v))) for k, v in python_dict.items()}
 
 
 def boto3_deserializer(boto3_attribute_value_dict):
