@@ -16,6 +16,20 @@
       "resource_type": "rest_api",
       "rest_api_id": "phvd0xwafe",
       "rest_api_url": "https://phvd0xwafe.execute-api.us-east-1.amazonaws.com/api/"
+    },
+    {
+      "name": "api_gateway_custom_domain",
+      "resource_type": "domain_name",
+      "hosted_zone_id": "Z1UJRXOUMOOFQ8",
+      "alias_domain_name": "d-bc8b4dy7b5.execute-api.us-east-1.amazonaws.com",
+      "certificate_arn": "arn:aws:acm:us-east-1:560056245423:certificate/bcd0c279-8fd7-4db0-8732-988e09933065",
+      "security_policy": "TLS_1_2",
+      "domain_name": "geo-hash.farzadpanahi.com",
+      "api_mapping": [
+        {
+          "key": "/"
+        }
+      ]
     }
   ],
   "schema_version": "2.0",

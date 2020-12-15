@@ -1,8 +1,13 @@
 {
   "version": "2.0",
   "app_name": "rest",
+  "api_gateway_endpoint_type": "REGIONAL",
   "stages": {
     "dev": {
+      "api_gateway_custom_domain": {
+        "domain_name": "geo-hash.farzadpanahi.com",
+        "certificate_arn": "arn:aws:acm:us-east-1:560056245423:certificate/bcd0c279-8fd7-4db0-8732-988e09933065"
+      },
       "api_gateway_stage": "api"
     }
   }
