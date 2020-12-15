@@ -56,6 +56,7 @@ class TestGeoHash(TestCase):
         geo_hash.add_geo_point(49.2695199, -123.12808620000001, {'country': 'canada', 'city': 'vancouver', 'name': 'home'})
         geo_hash.add_geo_point(49.27985, -123.08105, {'country': 'canada', 'city': 'vancouver', 'name': 'la casa gelato'})
         geo_hash.add_geo_point(49.25891, -123.16817, {'country': 'canada', 'city': 'vancouver', 'name': 'la glace'})
+        geo_hash.add_geo_point(49.888378706954256, -119.4977704729105, {'country': 'canada', 'city': 'kelowna', 'name': 'moo-lix'})
 
         result = geo_hash.get_geo_points_by_radius(49.2695199, -123.12808620000001, 50000)  # 50km radius
         # print(result)
@@ -67,4 +68,30 @@ class TestGeoHash(TestCase):
         self.assertTrue(len(result) > 0)
         self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'la casa gelato', result))) > 0)  # ~25km
         self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'la glace', result))) > 0)  # ~3km
+        self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'moo-lix', result))) == 0)  # ~270km
+
+    def test_get_geo_points_by_rectangle(self):
+        geo_hash = GeoHash(
+            self.config['dynamodb']['region'],
+            self.config['dynamodb']['table'],
+            self.config['dynamodb']['hash_key_length']
+        )
+
+        geo_hash.add_geo_point(49.2695199, -123.12808620000001, {'country': 'canada', 'city': 'vancouver', 'name': 'home'})
+        geo_hash.add_geo_point(49.27985, -123.08105, {'country': 'canada', 'city': 'vancouver', 'name': 'la casa gelato'})
+        geo_hash.add_geo_point(49.25891, -123.16817, {'country': 'canada', 'city': 'vancouver', 'name': 'la glace'})
+        geo_hash.add_geo_point(49.888378706954256, -119.4977704729105, {'country': 'canada', 'city': 'kelowna', 'name': 'moo-lix'})
+
+        result = geo_hash.get_geo_points_by_rectangle(49.321060, -123.311955, 49.156079, -122.757145)  # greater vancouver rectangle
+        # print(result)
+        self.assertIsNotNone(result)
+
+        for r in result:
+            print(r)
+
+        self.assertTrue(len(result) > 0)
+        self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'la casa gelato', result))) > 0)  # ~25km
+        self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'la glace', result))) > 0)  # ~3km
+        self.assertTrue(len(list(filter(lambda i: i.properties['name'] == 'moo-lix', result))) == 0)  # ~270km
+
 

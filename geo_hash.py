@@ -65,8 +65,17 @@ class GeoHash(object):
 
         return None
 
-    def get_geo_points_by_rectangle(self, min_point, max_point, properties_filter=None):
-        pass
+    def get_geo_points_by_rectangle(self, min_point_latitude, min_point_longitude, max_point_latitude, max_point_longitude, properties_filter=None):
+        response = self.geo_data_manager.queryRectangle(
+            dynamodbgeo.QueryRectangleRequest(
+                dynamodbgeo.GeoPoint(min_point_latitude, min_point_longitude),
+                dynamodbgeo.GeoPoint(max_point_latitude, max_point_longitude),
+                {}
+            ))
 
+        if response is not None:
+            return [GeoJsonPoint.decode_from_dynamodbgeo(boto3_deserializer(item)) for item in response]
+
+        return None
 
 
