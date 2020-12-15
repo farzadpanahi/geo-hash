@@ -13,7 +13,7 @@ import configparser
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read('../chalicelib/config.ini')
     create_geo_table(
         config['dynamodb']['region'],
         config['dynamodb']['table'],
